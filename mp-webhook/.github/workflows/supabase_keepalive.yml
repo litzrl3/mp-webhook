@@ -1,0 +1,20 @@
+name: Supabase Keep-Alive
+
+# Este é o gatilho: a rotina irá correr todos os dias às 3 da manhã
+on:
+  schedule:
+    - cron: '0 3 * * *' # Formato Cron: Minuto Hora Dia Mês Dia-da-semana
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Database
+        # Usamos uma ferramenta simples (curl) para fazer um pedido à base de dados.
+        # Isto conta como "atividade" para o Supabase.
+        # Apenas selecionamos 1 linha da tabela de produtos.
+        run: |
+          curl -X GET \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/products?select=*&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
